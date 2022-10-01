@@ -21,7 +21,7 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 });
 
 app.use(cors({
-  origin: 'https://asuleymanova.nomoreparties.icu',
+  origin: 'https://asuleymanova.nomoredomains.icu',
 }))
 
 app.use(helmet());
