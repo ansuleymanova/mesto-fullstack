@@ -55,4 +55,4 @@ class Auth {
     }
 }
 
-export const auth = new Auth('http://localhost:3000');
+export const auth = new Auth('https://api.asuleymanova.nomoredomains.icu');

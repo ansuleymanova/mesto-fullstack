@@ -84,7 +84,7 @@ class Api {
 }
 
 export const api = new Api({
-    url: 'http://localhost:3000',
+    url: 'https://api.asuleymanova.nomoredomains.icu',
     headers: {
         "Content-type": "application/json",
         "Authorization": `Bearer ${token}`
