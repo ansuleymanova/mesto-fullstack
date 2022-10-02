@@ -84,7 +84,7 @@ class Api {
 }
 
 export const api = new Api({
-    url: 'https://api.asuleymanova.nomoredomains.icu',
+    url:'https://api.asuleymanova.nomoredomains.icu',
     headers: {
         "Content-type": "application/json",
         "Authorization": `Bearer ${token}`

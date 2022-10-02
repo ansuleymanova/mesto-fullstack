@@ -26,8 +26,7 @@ function App() {
   const [selectedCard, setSelectedCard] = useState({});
   const [currentUser, setCurrentUser] = useState({});
   const [cards, setCards] = useState([]);
-  const [token, setToken] = useState(localStorage.getItem('jwt'));
-  const [loggedIn, setLoggedIn] = useState(!!token);
+  const [loggedIn, setLoggedIn] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [successfulRegister, setSuccessfulRegister] = useState(false);
@@ -49,10 +48,9 @@ function App() {
         .then((res) => {
           if (res.token) {
             localStorage.setItem('email', email);
-            localStorage.setItem('jwt', res.token);
             setPassword('');
             setLoggedIn(true);
-            history.push('/');
+            history.go('/');
           }
         }).catch((err) => {
       console.log(err);
@@ -63,11 +61,17 @@ function App() {
 
   function handleLogout() {
     setEmail('');
+    setLoggedIn(false);
+    setCurrentUser({});
     localStorage.removeItem('jwt');
+    localStorage.removeItem('email');
   }
 
   function closeInfoToolTip() {
       setIsInfoToolTipOpen(false);
+      if (successfulRegister) {
+        history.push('/sign-in');
+      }
   }
 
   function handleRegister() {
@@ -75,12 +79,9 @@ function App() {
       return;
     }
     auth.register(password, email).then((res) => {
-      if (res.statusCode !== 400) {
         setPassword('');
         setSuccessfulRegister(true);
         setIsInfoToolTipOpen(true);
-        history.push('/sign-in');
-      }
     }).catch((err) => {
       console.log(err);
       setSuccessfulRegister(false);
@@ -89,7 +90,7 @@ function App() {
   }
 
   function handleCardLike(card) {
-    const isLiked = card.likes.some(i => i._id === currentUser._id);
+    const isLiked = card.likes.some(i => i === currentUser._id);
     api.toggleCardLike(card._id, isLiked).then((newCard) => {
       setCards((state) => state.map((c) => c._id ===card._id ? newCard : c))
     }).catch((err) => console.log(err))
@@ -148,22 +149,20 @@ function App() {
     }
 
   useEffect(() => {
-    setToken(localStorage.getItem('jwt'));
-    if (token) {
-      //check if good
-      setLoggedIn(true);
-      api.getUserInfo().then((userInfo) => {
+    api.getUserInfo().then((userInfo) => {
         setCurrentUser(userInfo);
-      }).catch((err) => console.log(err));
-    } else {
-      setLoggedIn(false);
-    }
-  }, [loggedIn])
+        setLoggedIn(true);
+        setEmail(userInfo.email);
+        history.push('/');
+      }).catch((err) => {
+        console.log(err);
+      });
+  }, [loggedIn, history])
 
   useEffect(() => {
     if (loggedIn) {
       api.getInitialCards().then((cards) => {
-        setCards(cards);
+        setCards(cards.reverse());
       }).catch((err) => console.log(err));
     }
   }, [loggedIn])
@@ -209,7 +208,7 @@ function App() {
               <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onAddPlace={handleAddPlaceSubmit} />
               <PopupWithForm name="confirm" title="Вы уверены?" isOpen={isConfirmPopupOpen} onClose={closeAllPopups} buttonText="Да"></PopupWithForm>
               <ImagePopup card={selectedCard} onClose={closeAllPopups}/>
-              <InfoTooltip isOpen={isInfoToolTipOpen} onClose={closeInfoToolTip} text={successfulRegister ? "Вы успешно зарегистрировались!" : "Что-то пошло не так! Попробуйте еще раз."}/>
+              <InfoTooltip result={successfulRegister} isOpen={isInfoToolTipOpen} onClose={closeInfoToolTip} text={successfulRegister ? "Вы успешно зарегистрировались!" : "Что-то пошло не так! Попробуйте еще раз."}/>
             </div>
           </div>
         </CurrentUserContext.Provider>

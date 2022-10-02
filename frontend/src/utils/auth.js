@@ -41,18 +41,8 @@ class Auth {
                 }
             })
     }
-
-    checkToken(token) {
-        return fetch(`${this.baseUrl}/users/me`, {
-            method: 'GET',
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization" : `Bearer ${token}`
-            }
-        })
-            .then(res => this._getResponseData(res))
-            .then(data => data)
-    }
 }
 
-export const auth = new Auth('https://api.asuleymanova.nomoredomains.icu');
+export const auth = new Auth(
+    'https://api.asuleymanova.nomoredomains.icu'
+    );

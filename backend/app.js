@@ -3,7 +3,6 @@ const mongoose = require('mongoose');
 const helmet = require('helmet');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const cookieParser = require('cookie-parser')
 const { celebrate, Joi, errors } = require('celebrate');
 const { login, createUser } = require('./controllers/users');
 const auth = require('./middlewares/auth');
@@ -21,13 +20,12 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 });
 
 app.use(cors({
-  origin: 'https://asuleymanova.nomoredomains.icu',
+  origin: ['https://asuleymanova.nomoredomains.icu', 'http://localhost:3001'],
 }))
 
 app.use(helmet());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-//app.use(cookieParser());
 
 //app.use(requestLogger);
 
