@@ -65,6 +65,7 @@ function App() {
     setCurrentUser({});
     localStorage.removeItem('jwt');
     localStorage.removeItem('email');
+    history.push('/sign-in');
   }
 
   function closeInfoToolTip() {

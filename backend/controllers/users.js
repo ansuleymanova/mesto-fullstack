@@ -64,6 +64,7 @@ function createUser(req, res, next) {
             newErr.responseObject = { message: 'Пользователь с такой почтой уже зарегистрирован' };
             newErr.statusCode = 409;
             next(newErr);
+            return;
           }
           if (err.name === 'ValidationError') {
             const newErr = new BadRequestError('Переданы некорректные данные');

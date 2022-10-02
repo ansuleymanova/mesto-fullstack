@@ -8,6 +8,7 @@ const { login, createUser } = require('./controllers/users');
 const auth = require('./middlewares/auth');
 const { INTERNAL_SERVER_ERROR } = require('./utils/status-codes');
 const NotFoundError = require('./errors/not-found-err');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const { PORT = 3000 } = process.env;
 
@@ -27,7 +28,13 @@ app.use(helmet());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-//app.use(requestLogger);
+app.use(requestLogger);
+
+app.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Сервер сейчас упадёт');
+  }, 0);
+});
 
 app.post('/signin', celebrate({
   body: Joi.object().keys({
@@ -50,6 +57,8 @@ app.post('/signup', celebrate({
 app.use(auth);
 app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
+
+app.use(errorLogger);
 
 app.use(errors());
 
